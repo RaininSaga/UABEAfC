@@ -1,3 +1,5 @@
+[English](https://github.com/RaininSaga/UABEAfC/blob/master/README.md)
+
 # UABEA for Command  (Early Access) 
 
 UnityのAssetFileやAssetBundleに対して、コマンドライン上で簡易的なimport/exportを行います。UABEAfCは [nesrak1/UABEA](https://github.com/nesrak1/UABEA)を基に作成されました。
