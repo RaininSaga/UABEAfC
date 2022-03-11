@@ -15,7 +15,6 @@ namespace UABEC {
         static void Main(string[] args) {
 
             ArgCont ag = new ArgCont();
-            string str = "";
 
 
 
