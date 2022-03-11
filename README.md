@@ -1,3 +1,4 @@
+[日本語](https://github.com/RaininSaga/UABEAfC/blob/master/README_JP.md)
 # UABEA for Command  (Early Access) 
 
 Simple import/export on the command line to Unity's AssetFile and AssetBundle.
