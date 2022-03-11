@@ -1,5 +1,0 @@
-“This product includes components of the PowerVR Tools Software from Imagination Technologies Limited”
-
-PVRTexTool
-https://developer.imaginationtech.com/downloads/
-https://developer.imaginationtech.com/terms/powervr-tools-software-eula/
