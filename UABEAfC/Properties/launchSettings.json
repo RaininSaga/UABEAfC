@@ -1,8 +1,7 @@
 {
   "profiles": {
     "UABEAfC": {
-      "commandName": "Project",
-      "commandLineArgs": "\"C:\\Program Files (x86)\\Steam\\steamapps\\common\\Minion Masters\\MinionMasters_Data\\resources.assets\" -import \"/SimSun Tailored SDF Material:0:11\" \"C:\\Program Files (x86)\\Steam\\steamapps\\common\\Minion Masters\\MinionMasters_Data\\_SimSun Tailored SDF Materiaghghl_0_11\""
+      "commandName": "Project"
     }
   }
 }
