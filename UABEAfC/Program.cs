@@ -18,7 +18,6 @@ namespace UABEC
         {
 
             ArgCont ag = new ArgCont();
-            string str = "";
 
 
 
