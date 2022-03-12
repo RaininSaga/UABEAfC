@@ -4,7 +4,7 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 UABEAfC/UABEAfC/lib/Avalonia/
-UABEAfC/UABEAfC/Properties/
+UABEAfC/Properties/
 
 # User-specific files
 *.rsuser

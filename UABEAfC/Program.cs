@@ -8,7 +8,7 @@ using System.Threading;
 
 
 
-namespace UABEC {
+namespace UABEAfC {
     internal class Program {
         static string ver = "0.10";
 

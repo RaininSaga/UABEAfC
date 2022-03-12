@@ -15,7 +15,7 @@ using TextAssetPlugin;
 using AssetsTools.NET;
 using AssetsTools.NET.Extra;
 
-namespace UABEC {
+namespace UABEAfC {
     internal class Main {
 
         public AssetWorkspace Workspace { set; get; }
@@ -36,27 +36,7 @@ namespace UABEC {
 
         private ArgCont ag;
 
-        /*
-        UABEAC [AssetFile]
-	        Display item list.
-
-        UABEAC [AssetFile] -export [ItemName]
-            Export contents of asset file/bundle.
-
-        UABEAC [AssetFile] -import [ItemName] [ImportFile]
-         
-         */
-
         public Main(ArgCont args) {
-            //string filePath = @"C:\Program Files (x86)\Steam\steamapps\common\Minion Masters\MinionMasters_Data\sharedassets0.assets";
-            //string filePath2 = @"C:\Program Files (x86)\Steam\steamapps\common\Minion Masters\MinionMasters_Data\StreamingAssets\AssetBundles\scenes\newbundle";
-
-
-            //args[0]=filePath;
-            //args[1]="-export";
-            //args[2]="";
-            //args[3]=filePath2;
-            // UABEAfCL  
             ag = args;
 
             Init(); //Load classdata.tpk to AssetManager.
@@ -71,8 +51,6 @@ namespace UABEC {
             } catch (Exception ex) {
                 Console.WriteLine("Error");
                 Console.WriteLine(ex.ToString());
-
-
 
             }
         }
@@ -95,9 +73,6 @@ namespace UABEC {
         public void Proc(string filePath) {
 
 
-
-
-
             DetectedFileType fileType = AssetBundleDetector.DetectFileType(filePath);
 
             am.UnloadAllAssetsFiles(true);
@@ -110,7 +85,7 @@ namespace UABEC {
                 bundleInst = am.LoadBundleFile(filePath, false);
                 //don't pester user to decompress if it's only the header that is compressed
                 if (AssetBundleUtil.IsBundleDataCompressed(bundleInst.file)) {
-                    //AskLoadCompressedBundle(bundleInst);
+                    DecompressToMemory(bundleInst);
                 } else {
                     if ((bundleInst.file.bundleHeader6.flags & 0x3F) != 0) //header is compressed (most likely)
                         bundleInst.file.UnpackInfoOnly();
@@ -124,6 +99,7 @@ namespace UABEC {
                 } else {
                     index = 0;
                 }
+
                 fileInst = BundleLoad(index);
                 Info();// fileinst = load[selected assetfile in bundle]
                 //fileInst = am.LoadAssetsFile(filePath, true);
@@ -338,23 +314,17 @@ namespace UABEC {
             AssetsFileInstance thisFileInst = cont.FileInstance;
             AssetsFile thisFile = thisFileInst.file;
 
+            string container = string.Empty;
+            int fileId = Workspace.LoadedFiles.IndexOf(thisFileInst); //todo faster lookup THIS IS JUST FOR TESTING
+            long pathId = cont.PathId;
+            int size = (int)cont.Size;
+            string modified = "";
+
             string name;
-            string container;
             string type;
-            int fileId;
-            long pathId;
-            int size;
-            string modified;
-
-            container = string.Empty;
-            fileId = Workspace.LoadedFiles.IndexOf(thisFileInst); //todo faster lookup THIS IS JUST FOR TESTING
-            pathId = cont.PathId;
-            size = (int)cont.Size;
-            modified = "";
-
             Extensions.GetUABENameFast(thisFile, Workspace.am.classFile, cont.FileReader, cont.FilePosition, cont.ClassId, cont.MonoId, true, out name, out type);
 
-            var item = new AssetInfoDataGridItem {
+            AssetInfoDataGridItem item = new AssetInfoDataGridItem {
                 Name = name,
                 Container = container,
                 Type = type,
@@ -387,16 +357,7 @@ namespace UABEC {
             AssetsFileInstance selectedInst = selectedCont.FileInstance;
 
             Extensions.GetUABENameFast(selectedCont, am.classFile, false, out string assetName, out string _);
-            /*
-            SaveFileDialog sfd = new SaveFileDialog();
-            sfd.Title = "Save As";
-            sfd.Filters = new List<FileDialogFilter>() {
-                new FileDialogFilter() { Name = "Raw Unity Asset", Extensions = new List<string>() { "dat" } }
-            };
-            sfd.InitialFileName = $"{assetName}-{Path.GetFileName(selectedInst.path)}-{selectedCont.PathId}.dat";
 
-            string file = await sfd.ShowAsync(this);
-            */
             string file = Path.GetDirectoryName(ag.assetFilePathOrigin) + "\\" + ag.bundleName + "_" + ag.assetName + "_" + ag.fileId + "_" + ag.pathId;
             if (file != null && file != string.Empty) {
                 using (FileStream fs = File.OpenWrite(file)) {
@@ -408,18 +369,7 @@ namespace UABEC {
         private void SingleImportRaw(List<AssetContainer> selection) {
             AssetContainer selectedCont = selection[0];
             AssetsFileInstance selectedInst = selectedCont.FileInstance;
-            /*
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Title = "Open";
-            ofd.Filters = new List<FileDialogFilter>() {
-                new FileDialogFilter() { Name = "Raw Unity Asset", Extensions = new List<string>() { "dat" } }
-            };
-            string[] fileList = await ofd.ShowAsync(this);
-            if (fileList.Length == 0)
-                return;
-            
-            string file = fileList[0];
-            */
+
             string file = ag.importFilePath;
 
             if (file != null && file != string.Empty) {
@@ -620,7 +570,7 @@ namespace UABEC {
             if (int.TryParse(num, out index)) {
                 selectedBundleName = bundleInst.file.bundleInf6.dirInf[index].name;
             } else {
-                Console.WriteLine("invalid input. Try 0.");
+                Console.WriteLine("Invalid input. Try 0.");
                 selectedBundleName = bundleInst.file.bundleInf6.dirInf[index].name;
 
             }
@@ -682,31 +632,25 @@ namespace UABEC {
 
 
 
+        private void DecompressToMemory(BundleFileInstance bundleInst) {
+            AssetBundleFile bundle = bundleInst.file;
 
+            MemoryStream bundleStream = new MemoryStream();
+            bundle.Unpack(bundle.reader, new AssetsFileWriter(bundleStream));
 
+            byte ee = bundle.bundleHeader6.GetCompressionType();
 
+            bundleStream.Position = 0;
 
+            AssetBundleFile newBundle = new AssetBundleFile();
+            newBundle.Read(new AssetsFileReader(bundleStream), false);
 
-
-    }
-
-    public class AssetInfoDataGridItem : INotifyPropertyChanged {
-        public string Name { get; set; }
-        public string Container { get; set; }
-        public string Type { get; set; }
-        public uint TypeID { get; set; }
-        public int FileID { get; set; }
-        public long PathID { get; set; }
-        public int Size { get; set; }
-        public string Modified { get; set; }
-
-        public AssetContainer assetContainer;
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        //ultimate lazy
-        public void Update(string propertyName = "") {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            bundle.reader.Close();
+            bundleInst.file = newBundle;
         }
-    }
+
+
+
+            }
+
 }
