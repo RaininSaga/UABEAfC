@@ -10,7 +10,7 @@ UABEAfCは [nesrak1/UABEA](https://github.com/nesrak1/UABEA)を基に作成さ�
 
 UABEAのコードを基にしているため、基本的にUABEAでできないことはUABEAfCでもできません。  
 RawData、Texture2D、textAssetのimport/exportに対応しています。  
-LZ4、LZMAの圧縮形式に対応しており、指定したAssetBundleが圧縮されていた場合は自動的に展開または圧縮を行います。
+LZ4、LZMAの圧縮形式に対応しており、指定したAssetBundleが圧縮されていた場合は自動的に展開または圧縮（repack）を行います。
   
   
 本ソフトウェアはMITライセンスのもとで複製・配布・改変ができます。  
