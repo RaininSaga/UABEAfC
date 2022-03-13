@@ -53,8 +53,29 @@ namespace UABEAfC {
                 Console.WriteLine(ex.ToString());
 
             }
-        }
+            try {
 
+                am.UnloadAllAssetsFiles(true);
+                am.UnloadAllBundleFiles();
+                bundleInst = null;
+                Workspace = null;
+                am= null;
+                ChangedAssetsDatas = null;
+                dataGridItems = null;
+                newFiles = null;    
+          
+                if (File.Exists(ag.assetFilePath)) {
+
+                    File.Delete(ag.assetFilePathOrigin + "_temp");
+                    File.Delete(ag.assetFilePathOrigin + "_temp");
+                }
+                if (File.Exists(ag.assetFilePathOrigin + "_comp")) {
+                    File.Delete(ag.assetFilePathOrigin + "_comp");
+                }
+            } catch (Exception ex) { }
+
+            return;
+        }
 
 
 
@@ -78,6 +99,7 @@ namespace UABEAfC {
             am.UnloadAllAssetsFiles(true);
             am.UnloadAllBundleFiles();
             AssetsFileInstance fileInst = null;
+            AssetBundleCompressionType compressOption = AssetBundleCompressionType.NONE;
 
             bool fromBundle = false;
             if (fileType == DetectedFileType.BundleFile) {
@@ -85,7 +107,10 @@ namespace UABEAfC {
                 bundleInst = am.LoadBundleFile(filePath, false);
                 //don't pester user to decompress if it's only the header that is compressed
                 if (AssetBundleUtil.IsBundleDataCompressed(bundleInst.file)) {
-                    DecompressToMemory(bundleInst);
+                    int compType= new CompressBundle().DecompressToMemory(bundleInst);
+                    if (compType == 3) {compressOption= AssetBundleCompressionType.LZ4; }
+                    else if (compType == 1) { compressOption = AssetBundleCompressionType.LZMA; } 
+
                 } else {
                     if ((bundleInst.file.bundleHeader6.flags & 0x3F) != 0) //header is compressed (most likely)
                         bundleInst.file.UnpackInfoOnly();
@@ -97,7 +122,7 @@ namespace UABEAfC {
                 if (ag.option == "show") {
                     index = SelectBundle();
                 } else {
-                    index = 0;
+                    index=MatchBundle(ag.bundleName);                    
                 }
 
                 fileInst = BundleLoad(index);
@@ -182,11 +207,11 @@ namespace UABEAfC {
 
             if (ag.option == "-import") {
                 if (selection[0].ClassId == textureId) {
-                    EditTextureOption et = new EditTextureOption();
-                    et.ExecutePlugin("" + ag.importFilePath + "", Workspace, selection);
+                    EditTextureOption edt = new EditTextureOption();
+                    edt.ExecutePlugin("" + ag.importFilePath + "", Workspace, selection);
                 } else if (selection[0].ClassId == textId) {
-                    ImportTextAssetOption it = new ImportTextAssetOption();
-                    it.ExecutePlugin("" + ag.importFilePath + "", Workspace, selection);
+                    ImportTextAssetOption imt = new ImportTextAssetOption();
+                    imt.ExecutePlugin("" + ag.importFilePath + "", Workspace, selection);
 
                 } else {      //Raw Data
                     SingleImportRaw(selection);
@@ -204,9 +229,21 @@ namespace UABEAfC {
             SaveFile();
             if (fileType == DetectedFileType.BundleFile) {
                 BundlePreSave();
-                using (FileStream fs = File.OpenWrite(ag.assetFilePathOrigin))
-                using (AssetsFileWriter w = new AssetsFileWriter(fs)) {
-                    bundleInst.file.Write(w, newFiles.Values.ToList());
+
+
+                if (compressOption != AssetBundleCompressionType.NONE) {
+                    string preCompPath = ag.assetFilePathOrigin + "_comp";
+                    using (FileStream fs = File.OpenWrite(preCompPath))
+                    using (AssetsFileWriter w = new AssetsFileWriter(fs)) {
+                        bundleInst.file.Write(w, newFiles.Values.ToList());
+                    }
+                    CompressBundle cb= new CompressBundle(ag, preCompPath, compressOption);
+                    cb = null;
+                } else {
+                    using (FileStream fs = File.OpenWrite(ag.assetFilePathOrigin))
+                    using (AssetsFileWriter w = new AssetsFileWriter(fs)) {
+                        bundleInst.file.Write(w, newFiles.Values.ToList());
+                    }
                 }
             }
 
@@ -556,16 +593,20 @@ namespace UABEAfC {
             Console.WriteLine("This is an assetbundle.");
             Console.WriteLine("");
             int max = bundleInst.file.NumFiles;
-            for (int i = 0; i < max; i++) {
+            string num = "0";
+            if (max > 1) {
+                for (int i = 0; i < max; i++) {
 
-                Console.WriteLine("[" + i + "]   " + bundleInst.file.bundleInf6.dirInf[i].name);
+                    Console.WriteLine("[" + i + "]   " + bundleInst.file.bundleInf6.dirInf[i].name);
+                }
+                Console.WriteLine("");
+
+                Console.Write("Which file? [0-" + (max - 1) + "] >");
+
+                num = Console.ReadLine();
+            } else {
+                num = "0";
             }
-            Console.WriteLine("");
-
-            Console.Write("Which file? [0-" + (max - 1) + "] >");
-
-            string num = Console.ReadLine();
-
             int index = 0;
             if (int.TryParse(num, out index)) {
                 selectedBundleName = bundleInst.file.bundleInf6.dirInf[index].name;
@@ -580,6 +621,19 @@ namespace UABEAfC {
             return index;
         }
 
+
+        private int MatchBundle(string bName) {
+            int max = bundleInst.file.NumFiles;
+            int index = 0;
+            if (max > 1) {
+                for (int i = 0; i < max; i++) {
+                    if (bundleInst.file.bundleInf6.dirInf[i].name == bName) { index = i;break; }
+                }
+            } else {
+                index = 0;
+            }
+            return index;
+        }
 
 
 
@@ -632,25 +686,8 @@ namespace UABEAfC {
 
 
 
-        private void DecompressToMemory(BundleFileInstance bundleInst) {
-            AssetBundleFile bundle = bundleInst.file;
-
-            MemoryStream bundleStream = new MemoryStream();
-            bundle.Unpack(bundle.reader, new AssetsFileWriter(bundleStream));
-
-            byte ee = bundle.bundleHeader6.GetCompressionType();
-
-            bundleStream.Position = 0;
-
-            AssetBundleFile newBundle = new AssetBundleFile();
-            newBundle.Read(new AssetsFileReader(bundleStream), false);
-
-            bundle.reader.Close();
-            bundleInst.file = newBundle;
-        }
 
 
-
-            }
+    }
 
 }
