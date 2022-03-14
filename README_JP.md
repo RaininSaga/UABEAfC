@@ -6,7 +6,7 @@ UnityのAssetFileやAssetBundleに対して、コマンドライン上で簡易�
 UABEAfCは [nesrak1/UABEA](https://github.com/nesrak1/UABEA)を基に作成されました。
 
 他アプリから呼び出したり、batファイルでバッチ処理させたりする用途を想定しています。  
-それ以外の用途ではUABEAを利用するほうが便利じゃないかと思います。
+それ以外の用途ではUABEAを利用するほうが幸せになれると思います。
 
 UABEAのコードを基にしているため、基本的にUABEAでできないことはUABEAfCでもできません。  
 RawData、Texture2D、textAssetのimport/exportに対応しています。  
@@ -14,7 +14,7 @@ LZ4、LZMAの圧縮形式に対応しており、指定したAssetBundleが圧�
   
   
 本ソフトウェアはMITライセンスのもとで複製・配布・改変ができます。  
-ようは、お好みのプロジェクトにUABEAfCのファイル一式ぶち込んでください。Licenseファイルは消さないでね。
+ようは、お好みのプロジェクトにUABEAfCをぶち込んで使ったりしてください。Licenseファイルは消さないでね。
 
 ## Command
   ```UABEfC [Asset]```  
@@ -31,6 +31,6 @@ LZ4、LZMAの圧縮形式に対応しており、指定したAssetBundleが圧�
 ## Example:
   ```UABEfC "C:\Sample\resources.assets" -export "SampleData:0:11"```  
   ```UABEfC "C:\Sample\resources.assets" -import "SampleTexture:0:27" "C:\Sample\texture.png"```  
-  ```UABEfC "C:\Sample\AssetBundle" -import "BundleA/objectsxml:0:144" "C:\Sample\test.xml"```  
+  ```UABEfC "C:\Sample\AssetBundle" -import "CAB-123456789/objectsxml:0:144" "C:\Sample\test.xml"```  
      
-  ```[ItemName]```は"BundleName/AssetName:FileId:PathId"という要素で構成されています。バンドルでない場合は"/"は省略できます。
+  ```[ItemName]```は"BundleArchiveName/AssetName:FileId:PathId"という要素で構成されています。バンドルでない場合は"/"は省略できます。
