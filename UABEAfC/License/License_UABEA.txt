@@ -1,6 +1,5 @@
 
 UABEAfC is based on UABEA.
-
 nesrak1/UABEA is licensed under the MIT License.
 
 Copyright (c) 2021 nesrak1
