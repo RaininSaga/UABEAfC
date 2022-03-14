@@ -41,38 +41,44 @@ namespace UABEAfC {
 
             Init(); //Load classdata.tpk to AssetManager.
 
-            ag.assetFilePath += "_temp";    // working file
+            ag.AssetFilePath += "_temp";    // working file
 
-            System.IO.File.Copy(ag.assetFilePathOrigin, ag.assetFilePath, true);  //copy
+            System.IO.File.Copy(ag.AssetFilePathOrigin, ag.AssetFilePath, true);  //copy
 
 
             try {
-                Proc(ag.assetFilePath);
+                Proc(ag.AssetFilePath);
             } catch (Exception ex) {
                 Console.WriteLine("Error");
                 Console.WriteLine(ex.ToString());
 
             }
+
+            am.UnloadAllAssetsFiles(true);
+            am.UnloadAllBundleFiles();
+            bundleInst = null;
+            Workspace = null;
+            am = null;
+            ChangedAssetsDatas = null;
+            dataGridItems = null;
+            newFiles = null;
             try {
 
-                am.UnloadAllAssetsFiles(true);
-                am.UnloadAllBundleFiles();
-                bundleInst = null;
-                Workspace = null;
-                am= null;
-                ChangedAssetsDatas = null;
-                dataGridItems = null;
-                newFiles = null;    
-          
-                if (File.Exists(ag.assetFilePath)) {
+                if (File.Exists(ag.AssetFilePath)) {
 
-                    File.Delete(ag.assetFilePathOrigin + "_temp");
-                    File.Delete(ag.assetFilePathOrigin + "_temp");
+                    File.Delete(ag.AssetFilePathOrigin + "_temp");
+                    File.Delete(ag.AssetFilePathOrigin + "_temp");
                 }
-                if (File.Exists(ag.assetFilePathOrigin + "_comp")) {
-                    File.Delete(ag.assetFilePathOrigin + "_comp");
+            } catch (Exception ex) {
+                Console.WriteLine(ex.ToString());
+            }
+            try {
+                if (File.Exists(ag.AssetFilePathOrigin + "_decomp")) {
+                    File.Delete(ag.AssetFilePathOrigin + "_decomp");
                 }
-            } catch (Exception ex) { }
+            } catch (Exception ex) {
+                Console.WriteLine(ex.ToString());
+            }
 
             return;
         }
@@ -119,10 +125,10 @@ namespace UABEAfC {
 
 
                 int index = 0;
-                if (ag.option == "show") {
+                if (ag.Option == "show") {
                     index = SelectBundle();
                 } else {
-                    index=MatchBundle(ag.bundleName);                    
+                    index=MatchBundle(ag.BundleName);                    
                 }
 
                 fileInst = BundleLoad(index);
@@ -156,7 +162,7 @@ namespace UABEAfC {
 
             List<AssetInfoDataGridItem> gridItems = dataGridItems.ToList();
 
-            if (ag.option == "show") {
+            if (ag.Option == "show") {
                 ConsoleWriteItemList(gridItems);
                 return; //show list, and end.
             }
@@ -165,7 +171,7 @@ namespace UABEAfC {
 
             List<AssetContainer> selection = new List<AssetContainer>();
             foreach (var item in gridItems) {
-                if (ag.assetName == item.Name && ag.fileId == item.FileID.ToString() && ag.pathId == item.PathID.ToString()) {
+                if (ag.AssetName == item.Name && ag.FileId == item.FileID.ToString() && ag.PathId == item.PathID.ToString()) {
                     selection.Add(item.assetContainer);
                 }
             }
@@ -180,10 +186,10 @@ namespace UABEAfC {
             int textureId = AssetHelper.FindAssetClassByName(am.classFile, "Texture2D").classId;
             int textId = AssetHelper.FindAssetClassByName(am.classFile, "TextAsset").classId;
 
-            string exPath = Path.GetDirectoryName(ag.assetFilePathOrigin) + "\\" + ag.bundleName + "_" + ag.assetName + "_" + ag.fileId + "_" + ag.pathId;
+            string exPath = Path.GetDirectoryName(ag.AssetFilePathOrigin) + "\\" + ag.BundleName + "_" + ag.AssetName + "_" + ag.FileId + "_" + ag.PathId;
 
 
-            if (ag.option == "-export") {
+            if (ag.Option == "-export") {
                 if (selection[0].ClassId == textureId) {
                     ExportTextureOption et = new ExportTextureOption();
                     et.ExecutePlugin(exPath, Workspace, selection);
@@ -205,13 +211,13 @@ namespace UABEAfC {
 
 
 
-            if (ag.option == "-import") {
+            if (ag.Option == "-import") {
                 if (selection[0].ClassId == textureId) {
                     EditTextureOption edt = new EditTextureOption();
-                    edt.ExecutePlugin("" + ag.importFilePath + "", Workspace, selection);
+                    edt.ExecutePlugin("" + ag.ImportFilePath + "", Workspace, selection);
                 } else if (selection[0].ClassId == textId) {
                     ImportTextAssetOption imt = new ImportTextAssetOption();
-                    imt.ExecutePlugin("" + ag.importFilePath + "", Workspace, selection);
+                    imt.ExecutePlugin("" + ag.ImportFilePath + "", Workspace, selection);
 
                 } else {      //Raw Data
                     SingleImportRaw(selection);
@@ -232,7 +238,7 @@ namespace UABEAfC {
 
 
                 if (compressOption != AssetBundleCompressionType.NONE) {
-                    string preCompPath = ag.assetFilePathOrigin + "_comp";
+                    string preCompPath = ag.AssetFilePathOrigin + "_decomp";
                     using (FileStream fs = File.OpenWrite(preCompPath))
                     using (AssetsFileWriter w = new AssetsFileWriter(fs)) {
                         bundleInst.file.Write(w, newFiles.Values.ToList());
@@ -240,7 +246,7 @@ namespace UABEAfC {
                     CompressBundle cb= new CompressBundle(ag, preCompPath, compressOption);
                     cb = null;
                 } else {
-                    using (FileStream fs = File.OpenWrite(ag.assetFilePathOrigin))
+                    using (FileStream fs = File.OpenWrite(ag.AssetFilePathOrigin))
                     using (AssetsFileWriter w = new AssetsFileWriter(fs)) {
                         bundleInst.file.Write(w, newFiles.Values.ToList());
                     }
@@ -380,7 +386,7 @@ namespace UABEAfC {
             return item;
         }
 
-
+        /*
         private List<AssetContainer> GetSelectedAssetsReplaced() {
             List<AssetInfoDataGridItem> gridItems = dataGridItems.ToList();
             List<AssetContainer> exts = new List<AssetContainer>();
@@ -389,13 +395,14 @@ namespace UABEAfC {
             }
             return exts;
         }
+        */
         private void SingleExportRaw(List<AssetContainer> selection) {
             AssetContainer selectedCont = selection[0];
             AssetsFileInstance selectedInst = selectedCont.FileInstance;
 
             Extensions.GetUABENameFast(selectedCont, am.classFile, false, out string assetName, out string _);
 
-            string file = Path.GetDirectoryName(ag.assetFilePathOrigin) + "\\" + ag.bundleName + "_" + ag.assetName + "_" + ag.fileId + "_" + ag.pathId;
+            string file = Path.GetDirectoryName(ag.AssetFilePathOrigin) + "\\" + ag.BundleName + "_" + ag.AssetName + "_" + ag.FileId + "_" + ag.PathId;
             if (file != null && file != string.Empty) {
                 using (FileStream fs = File.OpenWrite(file)) {
                     AssetImportExport dumper = new AssetImportExport();
@@ -407,7 +414,7 @@ namespace UABEAfC {
             AssetContainer selectedCont = selection[0];
             AssetsFileInstance selectedInst = selectedCont.FileInstance;
 
-            string file = ag.importFilePath;
+            string file = ag.ImportFilePath;
 
             if (file != null && file != string.Empty) {
                 using (FileStream fs = File.OpenRead(file)) {
@@ -460,7 +467,7 @@ namespace UABEAfC {
                     sfd.Title = "Save as...";
                     sfd.InitialFileName = file.name;
                     */
-                    string filePath = ag.assetFilePathOrigin;
+                    string filePath = ag.AssetFilePathOrigin;
 
                     while (true) {
                         // filePath = await sfd.ShowAsync(this);

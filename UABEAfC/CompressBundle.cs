@@ -36,13 +36,13 @@ namespace UABEAfC {
 
             Init(); //Load classdata.tpk to AssetManager.
 
-            ag.assetFilePath = path;    // presave bundle file
+            ag.AssetFilePath = path;    // presave bundle file
 
             //System.IO.File.Copy(ag.assetFilePathOrigin, ag.assetFilePath, true);  //copy
 
 
             try {
-                Proc(ag.assetFilePath);
+                Proc(ag.AssetFilePath);
             } catch (Exception ex) {
                 Console.WriteLine("Error");
                 Console.WriteLine(ex.ToString());
@@ -73,34 +73,22 @@ namespace UABEAfC {
 
             am.UnloadAllAssetsFiles(true);
             am.UnloadAllBundleFiles();
-            AssetsFileInstance fileInst = null;
-            AssetBundleCompressionType compressOption = AssetBundleCompressionType.NONE;
 
-            bool fromBundle = false;
+
             if (fileType == DetectedFileType.BundleFile) {
-                // probably is not compressed
-                fromBundle = true;
                 bundleInst = am.LoadBundleFile(filePath, false);
                 //don't pester user to decompress if it's only the header that is compressed
                 if (AssetBundleUtil.IsBundleDataCompressed(bundleInst.file)) {
-
-                    int compType = DecompressToMemory(bundleInst);
-                    if (compType == 3) { compressOption = AssetBundleCompressionType.LZ4; } else if (compType == 1) { compressOption = AssetBundleCompressionType.LZMA; }
-
+                    DecompressToMemory(bundleInst); 
                 } else {
                     if ((bundleInst.file.bundleHeader6.flags & 0x3F) != 0) //header is compressed (most likely)
                         bundleInst.file.UnpackInfoOnly();
-                    //LoadBundle(bundleInst);
                 }
-
 
 
                 if (compOp != AssetBundleCompressionType.NONE) {
-                    Compress(bundleInst, ag.assetFilePathOrigin, compOp);
+                    Compress(bundleInst, ag.AssetFilePathOrigin, compOp);
                 }
-
-
-
 
 
                 am.UnloadAllAssetsFiles(true);
