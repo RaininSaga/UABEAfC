@@ -9,7 +9,7 @@ UABEAfCは [nesrak1/UABEA](https://github.com/nesrak1/UABEA)を基に作成さ�
 それ以外の用途ではUABEAを利用するほうが幸せになれると思います。
 
 UABEAのコードを基にしているため、基本的にUABEAでできないことはUABEAfCでもできません。  
-RawData、Texture2D、textAssetのimport/exportに対応しています。  
+RawData、Texture2D、TextAssetのimport/exportに対応しています。  
 LZ4、LZMAの圧縮形式に対応しており、指定したAssetBundleが圧縮されていた場合は自動的に展開または圧縮（repack）を行います。
   
   
@@ -33,4 +33,9 @@ LZ4、LZMAの圧縮形式に対応しており、指定したAssetBundleが圧�
   ```UABEfC "C:\Sample\resources.assets" -import "SampleTexture:0:27" "C:\Sample\texture.png"```  
   ```UABEfC "C:\Sample\AssetBundle" -import "CAB-123456789/objectsxml:0:144" "C:\Sample\test.xml"```  
      
-  ```[ItemName]```は"BundleArchiveName/FileName:FileId:PathId"という要素で構成されています。バンドルでない場合は"/"は省略できます。
+ `[ItemName]`は"BundleArchiveName/FileName:FileId:PathId"という要素で構成されています。バンドルでない場合は"/"は省略できます。
+    
+  ***
+    
+   [リリース](https://github.com/RaininSaga/UABEAfC/releases)
+  
