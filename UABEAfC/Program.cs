@@ -23,6 +23,8 @@ namespace UABEAfC {
                 //show help
 
                 Console.WriteLine("====  UABEA for Command  v" + ver + " (Early Access)  ====");
+                Console.WriteLine("Copyright (c) 2022 Rainin");
+                Console.WriteLine("Copyright (c) 2021 nesrak1");
                 Console.WriteLine("");
                 Console.WriteLine("Command:");
                 Console.WriteLine("  UABEfC [Asset]");
@@ -38,7 +40,7 @@ namespace UABEAfC {
                 Console.WriteLine("Example:");
                 Console.WriteLine("  UABEfC \"C:\\Sample\\resources.assets\" -export \"SampleData:0:11\"");
                 Console.WriteLine("  UABEfC \"C:\\Sample\\resources.assets\" -import \"SampleTexture:0:27\" \"C:\\Sample\\texture.png\" ");
-                Console.WriteLine("  UABEfC \"C:\\Sample\\AssetBundle\" -import \"BundleA/objectsxml:0:144\" \"C:\\Sample\\test.xml\" ");
+                Console.WriteLine("  UABEfC \"C:\\Sample\\AssetBundle\" -import \"CAB-123456789/objectsxml:0:144\" \"C:\\Sample\\test.xml\" ");
 
                 return;
             }
