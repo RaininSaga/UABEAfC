@@ -10,7 +10,7 @@ For other uses, it would be more convenient to use UABEA or other tools.
 Since it is based on UABEA code, what UABEA cannot do, UABEAfC cannot do either.  
 RawData, Texture2D, and TextAsset import/export are supported.  
 LZ4 and LZMA compression formats are supported.
-If the specified AssetBundle is compressed, it is automatically decomp/comp(repack).
+If the specified AssetBundle is compressed, it is automatically decomp or comp(repack).
 
 ## Command
   ```UABEfC [Asset]```  
