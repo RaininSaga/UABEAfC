@@ -1,7 +1,7 @@
 [日本語(JP)](https://github.com/RaininSaga/UABEAfC/blob/master/README_JP.md)
 # UABEA for Command  (Early Access) 
 
-Simple import/export on the command line to Unity's AssetFile and AssetBundle.
+Simple import/export on the command line to Unity's Assets and AssetBundles.
 UABEAfC was created based on [nesrak1/UABEA](https://github.com/nesrak1/UABEA).
 
 It is intended for use when calling from other applications or batch processing with .bat files.
