@@ -2,7 +2,7 @@
 
 # UABEA for Command  (Early Access) 
 
-UnityのAssetFileやAssetBundleに対して、コマンドライン上で簡易的なimport/exportを行います。   
+UnityのAssetやAssetBundleに対して、コマンドライン上で簡易的なimport/exportを行います。   
 UABEAfCは [nesrak1/UABEA](https://github.com/nesrak1/UABEA)を基に作成されました。
 
 他アプリから呼び出したり、batファイルでバッチ処理させたりする用途を想定しています。  
