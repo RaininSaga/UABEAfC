@@ -14,7 +14,7 @@ If the specified AssetBundle is compressed, it is automatically decomp or comp(r
 
 ## Command
   ```UABEfC [Asset]```  
-    Show a list of Asset file or bundle contents.
+    Show a list of Asset or bundle contents.
     The process shows the ItemName of each file. It's required for import/exoprt argument.
 
   ```UABEfC [Asset] -export [ItemName]```  
