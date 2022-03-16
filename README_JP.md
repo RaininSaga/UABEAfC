@@ -28,7 +28,7 @@ LZ4、LZMAの圧縮形式に対応しており、指定したAssetBundleが圧�
     ImportFileをItemNameとしてAssetにexportします。
 　　
 
-## Example:
+## Example
   ```UABEfC "C:\Sample\resources.assets" -export "SampleData:0:11"```  
   ```UABEfC "C:\Sample\resources.assets" -import "SampleTexture:0:27" "C:\Sample\texture.png"```  
   ```UABEfC "C:\Sample\AssetBundle" -import "CAB-123456789/objectsxml:0:144" "C:\Sample\test.xml"```  
