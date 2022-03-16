@@ -150,7 +150,7 @@ namespace UABEAfC {
 
 
             Workspace = new AssetWorkspace(am, fromBundle);
-            Workspace.ItemUpdated += Workspace_ItemUpdated;
+           // Workspace.ItemUpdated += Workspace_ItemUpdated;
 
             LoadAllAssetsWithDeps(assetsFiles);
             MakeDataGridItems();
@@ -310,36 +310,6 @@ namespace UABEAfC {
         }
 
 
-        private void Workspace_ItemUpdated(AssetsFileInstance file, AssetID assetId) {
-            int fileId = Workspace.LoadedFiles.IndexOf(file);
-            long pathId = assetId.pathID;
-
-            var gridItem = dataGridItems.FirstOrDefault(i => i.FileID == fileId && i.PathID == pathId);
-
-            if (Workspace.LoadedAssets.ContainsKey(assetId)) {
-                //added/modified entry
-                if (file != null) {
-                    AssetContainer? cont = Workspace.GetAssetContainer(file, 0, assetId.pathID);
-                    if (cont != null) {
-                        if (gridItem != null) {
-                            gridItem.assetContainer = cont;
-
-                            //SetFieldModified(gridItem);
-                            gridItem.Modified = "*";
-                            gridItem.Update();
-                        } else {
-                            gridItem = AddDataGridItem(cont, true);
-                            gridItem.Modified = "*";
-                        }
-                    }
-                }
-            } else {
-                //removed entry
-                if (gridItem != null) {
-                    dataGridItems.Remove(gridItem);
-                }
-            }
-        }
 
 
         private ObservableCollection<AssetInfoDataGridItem> MakeDataGridItems() {
