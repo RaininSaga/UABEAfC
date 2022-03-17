@@ -41,11 +41,6 @@ namespace UABEAfC {
 
             Init(); //Load classdata.tpk to AssetManager.
 
-            ag.AssetFilePath += "_temp";    // working file
-
-            System.IO.File.Copy(ag.AssetFilePathOrigin, ag.AssetFilePath, true);  //copy
-
-
             try {
                 Proc(ag.AssetFilePath);
             } catch (Exception ex) {
@@ -54,24 +49,7 @@ namespace UABEAfC {
 
             }
 
-            am.UnloadAllAssetsFiles(true);
-            am.UnloadAllBundleFiles();
-            bundleInst = null;
-            Workspace = null;
-            am = null;
-            ChangedAssetsDatas = null;
-            dataGridItems = null;
-            newFiles = null;
-            try {
-
-                if (File.Exists(ag.AssetFilePath)) {
-
-                    File.Delete(ag.AssetFilePathOrigin + "_temp");
-                    File.Delete(ag.AssetFilePathOrigin + "_temp");
-                }
-            } catch (Exception ex) {
-                Console.WriteLine(ex.ToString());
-            }
+            ClearAll();
             try {
                 if (File.Exists(ag.AssetFilePathOrigin + "_decomp")) {
                     File.Delete(ag.AssetFilePathOrigin + "_decomp");
@@ -255,10 +233,23 @@ namespace UABEAfC {
                     CompressBundle cb= new CompressBundle(ag, preCompPath, compressOption);
                     cb = null;
                 } else {
+                    /*
                     using (FileStream fs = File.OpenWrite(ag.AssetFilePathOrigin))
                     using (AssetsFileWriter w = new AssetsFileWriter(fs)) {
                         bundleInst.file.Write(w, newFiles.Values.ToList());
                     }
+                    */
+                    using (MemoryStream ms = new MemoryStream()) {
+                        using (AssetsFileWriter w = new AssetsFileWriter(ms)) {
+                            bundleInst.file.Write(w, newFiles.Values.ToList());
+                            ClearAll();
+                            using (FileStream fs = File.OpenWrite(ag.AssetFilePathOrigin)) {
+                                ms.Position = 0;
+                                ms.CopyTo(fs);
+                            }
+                        }
+                    }
+
                 }
             }
 
@@ -448,26 +439,21 @@ namespace UABEAfC {
                     */
                     string filePath = ag.AssetFilePathOrigin;
 
-                    while (true) {
-                        // filePath = await sfd.ShowAsync(this);
-
-                        if (filePath == "" || filePath == null)
-                            return;
-
-
-                        //if (Path.GetFullPath(filePath) == Path.GetFullPath(file.path)) {
-                        //    Console.WriteLine("Since this file is already open in UABEA, you must pick a new file name (sorry!)");
-                        //    continue;
-                        //} else {
-                        //    break;
-                        //}
-                        break;
+                    if (filePath == "" || filePath == null) {
+                        return;
                     }
+                    
 
                     try {
-                        using (FileStream fs = File.OpenWrite(filePath))
-                        using (AssetsFileWriter w = new AssetsFileWriter(fs)) {
-                            file.file.Write(w, 0, replacers, 0);
+                        using (MemoryStream ms = new MemoryStream()) {
+                            using (AssetsFileWriter w = new AssetsFileWriter(ms)) {
+                                file.file.Write(w, 0, replacers, 0);
+                                ClearAll();
+                                using (FileStream fs = File.OpenWrite(filePath)) {
+                                    ms.Position = 0;
+                                    ms.CopyTo(fs);
+                                }
+                            }
                         }
                     } catch (Exception ex) {
                         Console.WriteLine("Write exception\nThere was a problem while writing the file:\n" + ex.Message);
@@ -584,11 +570,9 @@ namespace UABEAfC {
             string num = "0";
             if (max > 1) {
                 for (int i = 0; i < max; i++) {
-
                     Console.WriteLine("[" + i + "]   " + bundleInst.file.bundleInf6.dirInf[i].name);
                 }
                 Console.WriteLine("");
-
                 Console.Write("Which file? [0-" + (max - 1) + "] >");
 
                 num = Console.ReadLine();
@@ -672,7 +656,20 @@ namespace UABEAfC {
             }
         }
 
-
+        private void ClearAll() {
+            try {
+                am.UnloadAllAssetsFiles(true);
+            } catch { }
+            try {
+                am.UnloadAllBundleFiles();
+            }catch { }
+            bundleInst = null;
+            Workspace = null;
+            am = null;
+            ChangedAssetsDatas = null;
+            dataGridItems = null;
+            newFiles = null;
+        }
 
 
 

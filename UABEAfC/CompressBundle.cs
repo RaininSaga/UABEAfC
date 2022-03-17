@@ -36,9 +36,8 @@ namespace UABEAfC {
 
             Init(); //Load classdata.tpk to AssetManager.
 
-            ag.AssetFilePath = path;    // presave bundle file
+            ag.AssetFilePath = path;    // presave bundle file _decmp
 
-            //System.IO.File.Copy(ag.assetFilePathOrigin, ag.assetFilePath, true);  //copy
 
 
             try {
