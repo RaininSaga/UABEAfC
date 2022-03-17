@@ -174,10 +174,20 @@ namespace UABEAfC {
                 if (ag.AssetName == item.Name && ag.FileId == item.FileID.ToString() && ag.PathId == item.PathID.ToString()) {
                     selection.Add(item.assetContainer);
                 }
+                if (ag.AssetName != item.Name && ag.FileId == item.FileID.ToString() && ag.PathId == item.PathID.ToString()) {
+                    selection.Add(item.assetContainer);
+                    Console.WriteLine("File name [" + ag.AssetName + "] is not found in asset. Instead, try Overwrites a file [" + item.Name + "] with a matching FileID and PathID.");
+               }
+
             }
             if (selection.Count == 0) {
                 //error
-                Console.WriteLine("Error: Invalid ItemName");
+                Console.WriteLine("Error: No match found for ItemName.");
+                return;
+            }
+            if (selection.Count >= 2) {
+                //error
+                Console.WriteLine("Error: ItemName matches for two or more files. Processing will continue.");
                 return;
             }
 
@@ -445,12 +455,14 @@ namespace UABEAfC {
                         if (filePath == "" || filePath == null)
                             return;
 
-                        if (Path.GetFullPath(filePath) == Path.GetFullPath(file.path)) {
-                            Console.WriteLine("Since this file is already open in UABEA, you must pick a new file name (sorry!)");
-                            continue;
-                        } else {
-                            break;
-                        }
+
+                        //if (Path.GetFullPath(filePath) == Path.GetFullPath(file.path)) {
+                        //    Console.WriteLine("Since this file is already open in UABEA, you must pick a new file name (sorry!)");
+                        //    continue;
+                        //} else {
+                        //    break;
+                        //}
+                        break;
                     }
 
                     try {
