@@ -188,7 +188,6 @@ namespace UABEAfC {
             if (selection.Count >= 2) {
                 //error
                 Console.WriteLine("Error: ItemName matches for two or more files. Processing will continue.");
-                return;
             }
 
 
