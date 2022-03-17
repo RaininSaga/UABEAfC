@@ -10,7 +10,7 @@ using System.Threading;
 
 namespace UABEAfC {
     internal class Program {
-        static readonly string ver = "0.20";
+        static readonly string ver = "0.21";
 
         static void Main(string[] args) {
 
