@@ -103,10 +103,14 @@ namespace UABEAfC {
 
 
                 int index = 0;
-                if (ag.Option == "show") {
+                if (ag.Option == "-show") {
                     index = SelectBundle();
                 } else {
-                    index=MatchBundle(ag.BundleName);                    
+                    index=MatchBundle(ag.BundleName);
+                    if (index == -1) {
+                        Console.WriteLine("Error: No match found for BundleArchiveName. Try "+ bundleInst.file.bundleInf6.dirInf[0].name+".");
+                        index = 0;
+                    }
                 }
 
                 fileInst = BundleLoad(index);
@@ -140,7 +144,7 @@ namespace UABEAfC {
 
             List<AssetInfoDataGridItem> gridItems = dataGridItems.ToList();
 
-            if (ag.Option == "show") {
+            if (ag.Option == "-show") {
                 ConsoleWriteItemList(gridItems);
                 return; //show list, and end.
             }
@@ -152,7 +156,7 @@ namespace UABEAfC {
                 if (ag.AssetName == item.Name && ag.FileId == item.FileID.ToString() && ag.PathId == item.PathID.ToString()) {
                     selection.Add(item.assetContainer);
                 }
-                if (ag.AssetName != item.Name && ag.FileId == item.FileID.ToString() && ag.PathId == item.PathID.ToString()) {
+                else if (ag.AssetName != item.Name && ag.FileId == item.FileID.ToString() && ag.PathId == item.PathID.ToString()) {
                     selection.Add(item.assetContainer);
                     Console.WriteLine("File name [" + ag.AssetName + "] is not found in asset. Instead, try Overwrites a file [" + item.Name + "] with a matching FileID and PathID.");
                }
@@ -598,9 +602,12 @@ namespace UABEAfC {
             int max = bundleInst.file.NumFiles;
             int index = 0;
             if (max > 1) {
+                index = -1;
+
                 for (int i = 0; i < max; i++) {
-                    if (bundleInst.file.bundleInf6.dirInf[i].name == bName) { index = i;break; }
+                    if (bundleInst.file.bundleInf6.dirInf[i].name == bName) { index = i; break; }
                 }
+
             } else {
                 index = 0;
             }

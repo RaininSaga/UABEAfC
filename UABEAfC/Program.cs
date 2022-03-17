@@ -52,7 +52,7 @@ namespace UABEAfC {
 
             if (args.Length <= 2) {
 
-                ag.Option = "show";
+                ag.Option = "-show";
                 //show assetfile            
             } else if (args.Length > 2) {
                 ag.Option = args[1];
@@ -67,6 +67,16 @@ namespace UABEAfC {
                 }
             }
 
+
+            if (ag.FileId == null) {
+                Console.WriteLine(" No FileId.");
+                fileExist = false;  
+            }
+
+            if (ag.PathId == null) {
+                Console.WriteLine(" No PathId.");
+                fileExist = false;
+            }
 
 
             if (fileExist == false) { return; }
@@ -107,9 +117,13 @@ namespace UABEAfC {
                 string str = "";
                 if (t.Length == 2) { BundleName = t[0]; str = t[1]; } else { str = t[0]; }
                 string[] ss = str.Split(new char[] { ':' });
-                AssetName = ss[0];
-                FileId = ss[1];
-                PathId = ss[2];
+                try {
+                    AssetName = ss[0];
+                    FileId = ss[1];
+                    PathId = ss[2];
+                }catch (Exception) {
+                    Console.WriteLine("Error: Invalid ItemName.");
+                }
 
             }
         }
