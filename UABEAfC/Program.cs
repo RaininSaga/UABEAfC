@@ -65,17 +65,20 @@ namespace UABEAfC {
                     fileExist = CheckExistFile(ag.ImportFilePath);
 
                 }
-            }
+
+                if (ag.FileId == null) {
+                    Console.WriteLine(" No FileId.");
+                    fileExist = false;
+                }
+
+                if (ag.PathId == null) {
+                    Console.WriteLine(" No PathId.");
+                    fileExist = false;
+                }
 
 
-            if (ag.FileId == null) {
-                Console.WriteLine(" No FileId.");
-                fileExist = false;  
-            }
 
-            if (ag.PathId == null) {
-                Console.WriteLine(" No PathId.");
-                fileExist = false;
+
             }
 
 

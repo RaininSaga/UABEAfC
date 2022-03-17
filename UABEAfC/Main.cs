@@ -266,13 +266,13 @@ namespace UABEAfC {
 
         private void ConsoleWriteItemList(List<AssetInfoDataGridItem> gridItems) {
 
-            Console.WriteLine("      ItemName   [Bundle/Name:FileId:PathId]                             Byte            Type");
-            Console.WriteLine("----------------------------------------------------------------------");
+            Console.WriteLine("      ItemName   [Bundle/Name:FileId:PathId]                                       Byte            Type");
+            Console.WriteLine("--------------------------------------------------------------------------------------------------------");
             StringBuilder sb = new StringBuilder();
             string t = "";
             foreach (var item in gridItems) {
 
-                t = string.Format("{0,-70}", selectedBundleName + "/" + item.Name + ":" + item.FileID + ":" + item.PathID);
+                t = string.Format("{0,-80}", selectedBundleName + "/" + item.Name + ":" + item.FileID + ":" + item.PathID);
                 sb.AppendLine(t + "   " + string.Format("{0,-9}", item.Size) + "     " + item.Type);
 
             }
